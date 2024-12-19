@@ -3,134 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignment-Submission-System-ASS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 20px 15px;
-            display: flex;
-            align-items: center;
-        }
-        /* Logo */
-        header img {
-            height: 40px;
-            margin-right: 20px; /* Abstand zwischen Logo und Linie1 */
-        }
-        /* Container für Linie1, Button und Linie2 */
-        .line-container {
-            display: flex;
-            align-items: center;
-            flex-grow: 1; /* Container füllt den Platz aus */
-        }
-        /* Erste Linie */
-        .line1 {
-            width: 15%; /* Breite der ersten Linie */
-            height: 2px;
-            background-color: #333;
-            margin: 0 10px;
-        }
-        /* Button */
-        header button {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            margin: 0 10px; /* Abstand zwischen Linie1 und Linie2 */
-        }
-        header button:hover {
-            background-color: #555;
-        }
-        /* Zweite Linie */
-        .line2 {
-            flex-grow: 1; /* Nimmt den restlichen verfügbaren Platz ein */
-            height: 2px;
-            background-color: #333;
-            margin-left: 10px; /* Abstand zwischen Button und Linie2 */
-        }
-        /* Hauptbereich */
-        main {
-            padding: 20px;
-            background-color: #f4f4f4;
-            height: calc(100vh - 160px);
-            display: flex; /* Flexbox für Zentrierung */
-            justify-content: center; /* Horizontal zentrieren */
-            align-items: center; /* Vertikal zentrieren */
-        }
-        /* Login-Formular */
-        .login-container {
-            background-color: white;
-            padding: 30px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-        .login-container h3 {
-            margin-bottom: 20px;
-        }
-        .login-container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        .login-container button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 100%;
-        }
-        .login-container button:hover {
-            background-color: #45a049;
-        }
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
+    <title>Assignment Submission System</title>
+    <link rel="stylesheet" href="style.css"> <!-- Verlinkung zur CSS-Datei -->
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <img src="https://via.placeholder.com/150" alt="Logo">
+        <img src="https://via.placeholder.com/150" alt="Logo" class="header-logo">
         <div class="line-container">
             <div class="line1"></div>
-            <button>Abgaben</button>
+            <button class="btn-abgaben" onclick="alert('Hier können Sie Ihre Abgaben verwalten.')">Abgaben</button>
             <div class="line2"></div>
         </div>
     </header>
 
-    <main>
-        <!-- Login Menü -->
+    <!-- Login-Bereich -->
+    <main id="login-screen">
         <div class="login-container">
             <h3>Login mit WebSSO</h3>
-            <form>
-                <input type="text" placeholder="Benutzername" required>
-                <input type="password" placeholder="Passwort" required>
-                <button type="submit">Anmelden</button>
+            <form onsubmit="return handleLogin(event)">
+                <input type="text" id="username" placeholder="LUH-ID" required>
+                <input type="password" id="password" placeholder="WebSSO-Passwort" required>
+                <button type="submit" class="btn-login">Anmelden</button>
             </form>
         </div>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Meine Website. Alle Rechte vorbehalten.</p>
-    </footer>
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard hidden">
+        <h2>Assignment Dashboard</h2>
+
+        <!-- Offene Assignments -->
+        <div class="assignment-section">
+            <h3 onclick="toggleSection('open-assignments')">Offene Assignments</h3>
+            <ul id="open-assignments" class="assignment-list hidden">
+                <li>GMCI_Assignment07 <button>📤 Upload</button></li>
+            </ul>
+        </div>
+
+        <!-- Abgeschlossene Assignments -->
+        <div class="assignment-section">
+            <h3 onclick="toggleSection('completed-assignments')">Abgeschlossene Assignments</h3>
+            <ul id="completed-assignments" class="assignment-list hidden">
+                <li>GMCI_Assignment06 <button>⬇ Download</button></li>
+                <li>GMCI_Assignment05 <button>⬇ Download</button></li>
+                <li>GMCI_Assignment04 <button>⬇ Download</button></li>
+                <li>GMCI_Assignment03 <button>⬇ Download</button></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script> <!-- Verlinkung zur JavaScript-Datei -->
 </body>
 </html>
+

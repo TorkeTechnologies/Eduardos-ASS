@@ -1,0 +1,122 @@
+/* Allgemeine Stile */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Header */
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px 15px;
+    display: flex;
+    align-items: center;
+}
+
+.header-logo {
+    height: 40px;
+    margin-right: 20px;
+}
+
+.line-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.line1, .line2 {
+    height: 2px;
+    background-color: #333;
+}
+
+.line1 {
+    width: 15%;
+    margin: 0 10px;
+}
+
+.line2 {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.btn-abgaben {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-abgaben:hover {
+    background-color: #555;
+}
+
+/* Login-Bereich */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.hidden {
+    display: none;
+}
+
+.login-container {
+    background-color: white;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn-login {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-login:hover {
+    background-color: #45a049;
+}
+
+/* Dashboard */
+.dashboard {
+    padding: 20px;
+}
+
+.assignment-section h3 {
+    cursor: pointer;
+    color: #4CAF50;
+}
+
+.assignment-list {
+    list-style: none;
+    padding: 0;
+}
+
+.assignment-list li {
+    margin: 5px 0;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
