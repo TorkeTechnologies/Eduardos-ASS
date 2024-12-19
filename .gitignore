@@ -1,0 +1,10 @@
+# Default ignored files
+/shelf/
+/.idea/
+# Editor-based HTTP Client requests
+/httpRequests/
+Eduardos-ASS.iml
+modules.xml
+vcs.xml
+workspace.xml
+.idea
