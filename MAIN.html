@@ -10,11 +10,11 @@
     <!-- Header -->
     <header>
         <img src="Logo.png" alt="Logo" class="header-logo">
-        <div class="line-container">
-            <div class="line1"></div>
-            <button class="btn-abgaben" onclick="alert('Hier können Sie Ihre Abgaben verwalten.')">Abgaben</button>
-            <div class="line2"></div>
-        </div>
+        <nav id="nav-links" class="hidden">
+            <button onclick="goToPage('startseite')">Startseite</button>
+            <button onclick="goToPage('aufgaben')">Aufgaben</button>
+            <button onclick="logout()">Logout</button>
+        </nav>
     </header>
 
     <!-- Login-Bereich -->
@@ -37,7 +37,11 @@
         <div class="assignment-section">
             <h3 onclick="toggleSection('open-assignments')">Offene Assignments</h3>
             <ul id="open-assignments" class="assignment-list hidden">
-                <li>GMCI_Assignment07 <button>📤 Upload</button></li>
+                <li>
+                    GMCI_Assignment07 
+                    <button onclick="openFileExplorer()">📤 Upload</button>
+                    <input type="file" id="file-input" class="hidden" onchange="redirectToUploadPage(event)">
+                </li>
             </ul>
         </div>
 
@@ -51,6 +55,19 @@
                 <li>GMCI_Assignment03 <button>⬇ Download</button></li>
             </ul>
         </div>
+    </div>
+
+    <!-- Dateibestätigung -->
+    <div id="file-confirmation" class="file-confirmation hidden">
+        <h2>Hochladen der Datei</h2>
+        <p>Dateiname: <span id="uploaded-filename"></span></p>
+        <button onclick="submitFile()">SUBMIT</button>
+    </div>
+
+    <!-- Danke-Seite -->
+    <div id="thank-you" class="thank-you hidden">
+        <h2>Vielen Dank für deinen Upload!</h2>
+        <button onclick="goToStartseite()">Zurück zur Startseite</button>
     </div>
 
     <script src="script.js"></script> <!-- Verlinkung zur JavaScript-Datei -->

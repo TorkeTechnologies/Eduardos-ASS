@@ -10,48 +10,36 @@ body {
 header {
     background-color: #4CAF50;
     color: white;
-    padding: 20px 15px;
+    padding: 20px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .header-logo {
     height: 40px;
-    margin-right: 20px;
 }
 
-.line-container {
+nav {
     display: flex;
-    align-items: center;
-    flex-grow: 1;
+    gap: 15px;
 }
 
-.line1, .line2 {
-    height: 2px;
-    background-color: #333;
-}
-
-.line1 {
-    width: 15%;
-    margin: 0 10px;
-}
-
-.line2 {
-    flex-grow: 1;
-    margin-left: 10px;
-}
-
-.btn-abgaben {
+nav button {
     background-color: #333;
     color: white;
     border: none;
-    padding: 10px 20px;
-    cursor: pointer;
+    padding: 10px 15px;
     border-radius: 5px;
+    cursor: pointer;
 }
 
-.btn-abgaben:hover {
+nav button:hover {
     background-color: #555;
+}
+
+.hidden {
+    display: none;
 }
 
 /* Login-Bereich */
@@ -60,10 +48,6 @@ main {
     justify-content: center;
     align-items: center;
     height: 80vh;
-}
-
-.hidden {
-    display: none;
 }
 
 .login-container {
@@ -119,4 +103,15 @@ main {
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+/* Dateibestätigung */
+.file-confirmation, .thank-you {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    margin: 50px auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 300px;
 }
