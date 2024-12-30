@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment Submission System</title>
-    <link rel="stylesheet" href="style.css"> <!-- Verlinkung zur CSS-Datei -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Header -->
@@ -36,9 +36,9 @@
         <!-- Offene Assignments -->
         <div class="assignment-section">
             <h3 onclick="toggleSection('open-assignments')">Offene Assignments</h3>
-            <ul id="open-assignments" class="assignment-list hidden">
+            <ul id="open-assignments" class="assignment-list">
                 <li>
-                    GMCI_Assignment07 
+                    GMCI_Assignment07
                     <button onclick="openFileExplorer()">📤 Upload</button>
                     <input type="file" id="file-input" class="hidden" onchange="redirectToUploadPage(event)">
                 </li>
@@ -48,12 +48,7 @@
         <!-- Abgeschlossene Assignments -->
         <div class="assignment-section">
             <h3 onclick="toggleSection('completed-assignments')">Abgeschlossene Assignments</h3>
-            <ul id="completed-assignments" class="assignment-list hidden">
-                <li>GMCI_Assignment06 <button>⬇ Download</button></li>
-                <li>GMCI_Assignment05 <button>⬇ Download</button></li>
-                <li>GMCI_Assignment04 <button>⬇ Download</button></li>
-                <li>GMCI_Assignment03 <button>⬇ Download</button></li>
-            </ul>
+            <ul id="completed-assignments" class="assignment-list hidden"></ul>
         </div>
     </div>
 
@@ -70,7 +65,6 @@
         <button onclick="goToStartseite()">Zurück zur Startseite</button>
     </div>
 
-    <script src="script.js"></script> <!-- Verlinkung zur JavaScript-Datei -->
+    <script src="script.js"></script>
 </body>
 </html>
-
