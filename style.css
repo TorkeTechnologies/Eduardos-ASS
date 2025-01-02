@@ -43,6 +43,29 @@ nav button:hover {
     display: none;
 }
 
+/* Ensure the body and html occupy the full height */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main content should take all available space */
+main {
+    flex: 1;
+}
+
+/* Footer styling */
+footer {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
 /* Login-Bereich */
 .login-container {
     background-color: white;
@@ -204,5 +227,3 @@ nav button:hover {
     height: 100%;
     object-fit: contain;
 }
-
-

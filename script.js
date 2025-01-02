@@ -1,130 +1,143 @@
-// Zuordnung von Assignments zu hochgeladenen Dateien
 let assignmentToFileMap = {};
 
-// Login-Funktion
+// Dynamically load views into the main container
+function loadView(viewPath, callback = null) {
+    fetch(viewPath)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Failed to load view: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then((html) => {
+            document.getElementById('view-container').innerHTML = html;
+            if (callback) callback(); // Run the callback after loading the view
+        })
+        .catch((error) => console.error('Error loading view:', error));
+}
+
+// Update the header based on the current view
+function updateHeader(view) {
+    const navLinks = document.getElementById('nav-links');
+    if (view === 'login') {
+        navLinks.classList.add('hidden'); // Hide navigation links for login
+    } else {
+        navLinks.classList.remove('hidden'); // Show navigation links for other views
+    }
+}
+
+// Load login view on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadView('views/login.html', () => updateHeader('login'));
+});
+
+// Handle login
 function handleLogin(event) {
-    event.preventDefault();
+    event.preventDefault(); // Prevent default form submission
+
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
     if (username && password) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        document.getElementById('nav-links').classList.remove('hidden');
+        console.log(`User logged in: ${username}`);
+        loadView('views/dashboard.html', () => {
+            updateHeader('dashboard');
+            setupDashboard();
+        });
     } else {
-        alert("Bitte geben Sie Benutzername und Passwort ein.");
+        alert('Please enter your LUH-ID and WebSSO password.');
     }
 }
 
-// Bereich ein-/ausklappen
+// Set up dashboard functionality
+function setupDashboard() {
+    document.getElementById('logout-button').addEventListener('click', logout);
+
+    // Example: Set up event listeners for open and completed assignments
+    document.querySelectorAll('.toggle-section').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const sectionId = btn.dataset.sectionId;
+            toggleSection(sectionId);
+        });
+    });
+
+    document.getElementById('file-input').addEventListener('change', redirectToUploadPage);
+}
+
+// Toggle section visibility
 function toggleSection(sectionId) {
     const section = document.getElementById(sectionId);
     section.classList.toggle('hidden');
 }
 
-// Öffnet den Datei-Explorer
+// Open file explorer
 function openFileExplorer() {
     const fileInput = document.getElementById('file-input');
     fileInput.click();
 }
 
-// Zeigt Bestätigungsseite nach Dateiauswahl
+// Redirect to file confirmation page
 function redirectToUploadPage(event) {
     const file = event.target.files[0];
     if (file) {
-        const openAssignmentsList = document.getElementById('open-assignments');
-        const firstOpenAssignment = openAssignmentsList.querySelector('li');
-        const assignmentName = firstOpenAssignment ? firstOpenAssignment.textContent.trim() : null;
-
-        if (assignmentName) {
-            assignmentToFileMap[assignmentName] = file.name;
-
-            document.getElementById('dashboard').classList.add('hidden');
-            document.getElementById('file-confirmation').classList.remove('hidden');
+        loadView('views/file-confirmation.html', () => {
+            updateHeader('file-confirmation');
             document.getElementById('uploaded-filename').textContent = file.name;
-        } else {
-            alert("Kein offenes Assignment verfügbar.");
-        }
+            document
+                .getElementById('submit-file-button')
+                .addEventListener('click', submitFile);
+        });
     }
 }
 
-// Datei hochladen und verschieben
+// Submit file and show thank-you page
 function submitFile() {
     const uploadedFileName = document.getElementById('uploaded-filename').textContent;
-
     if (uploadedFileName) {
         const assignmentName = Object.keys(assignmentToFileMap).find(
             key => assignmentToFileMap[key] === uploadedFileName
         );
-
         if (assignmentName) {
             moveToCompletedAssignments(assignmentName, uploadedFileName);
             delete assignmentToFileMap[assignmentName];
         }
-
-        document.getElementById('file-confirmation').classList.add('hidden');
-        document.getElementById('thank-you').classList.remove('hidden');
-
-        // Reiter für "Offene Assignments" und "Abgeschlossene Assignments" öffnen
-        document.getElementById('open-assignments').classList.remove('hidden');
-        document.getElementById('completed-assignments').classList.remove('hidden');
+        loadView('views/thank-you.html', () => {
+            updateHeader('thank-you');
+            document
+                .getElementById('return-to-dashboard-button')
+                .addEventListener('click', () => {
+                    loadView('views/dashboard.html', () => {
+                        updateHeader('dashboard');
+                        setupDashboard();
+                    });
+                });
+        });
+        // Fortschrittsbild aktualisieren
+        updateProgressImage();
     } else {
         alert("Kein Dateiname gefunden.");
     }
 }
 
-// Verschiebt das Assignment zu den abgeschlossenen
-function moveToCompletedAssignments(assignmentName, fileName) {
-    const completedAssignmentsList = document.getElementById('completed-assignments');
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `
-        ${assignmentName}
-        <button onclick="downloadFile('${fileName}')">⬇ Download</button>
-    `;
-    completedAssignmentsList.appendChild(listItem);
-
-    const openAssignmentsList = document.getElementById('open-assignments');
-    const openAssignmentItem = Array.from(openAssignmentsList.children).find(item =>
-        item.textContent.includes(assignmentName)
-    );
-    if (openAssignmentItem) {
-        openAssignmentsList.removeChild(openAssignmentItem); // Entfernt das Assignment vollständig
-    }
-}
-
-// Logout
+// Logout and return to login screen
 function logout() {
-    document.getElementById('dashboard').classList.add('hidden');
-    document.getElementById('nav-links').classList.add('hidden');
-    document.getElementById('login-screen').classList.remove('hidden');
-    alert("Sie haben sich erfolgreich ausgeloggt.");
+    loadView('views/login.html', () => updateHeader('login'));
+    alert('Sie haben sich erfolgreich ausgeloggt.');
 }
 
-// Wechsel zur Startseite
-function goToStartseite() {
-    document.getElementById('thank-you').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
+// Switch pages (e.g., Startseite, Aufgaben)
+function goToPage(page) {
+    alert(`Wechsel zu: ${page}`);
 }
-
-// Bilder für verschiedene Fortschrittsstufen
-const progressImages = {
-    full: "images/100-percent.png", // 100% abgeschlossen
-    threeQuarters: "images/75-percent.png", // 75% abgeschlossen
-    half: "images/50-percent.png", // 50% abgeschlossen
-    low: "images/less-than-50-percent.png" // Unter 50% abgeschlossen
-};
 
 // Fortschritt berechnen und Bild anzeigen
 function updateProgressImage() {
     const totalAssignments = document.getElementById('open-assignments').children.length +
-                             document.getElementById('completed-assignments').children.length;
-
+        document.getElementById('completed-assignments').children.length;
     const completedAssignments = document.getElementById('completed-assignments').children.length;
     const progress = (completedAssignments / totalAssignments) * 100;
-
     const progressImg = document.getElementById('progress-img');
     const progressImageContainer = document.getElementById('progress-image');
-
     // Fortschrittsbild auswählen
     if (progress === 100) {
         progressImg.src = progressImages.full;
@@ -135,35 +148,5 @@ function updateProgressImage() {
     } else {
         progressImg.src = progressImages.low;
     }
-
     // Fortschritts-Bild anzeigen
-    progressImageContainer.classList.remove('hidden');
-}
-
-// Fortschritt nach jedem Upload aktualisieren
-function submitFile() {
-    const uploadedFileName = document.getElementById('uploaded-filename').textContent;
-
-    if (uploadedFileName) {
-        const assignmentName = Object.keys(assignmentToFileMap).find(
-            key => assignmentToFileMap[key] === uploadedFileName
-        );
-
-        if (assignmentName) {
-            moveToCompletedAssignments(assignmentName, uploadedFileName);
-            delete assignmentToFileMap[assignmentName];
-        }
-
-        document.getElementById('file-confirmation').classList.add('hidden');
-        document.getElementById('thank-you').classList.remove('hidden');
-
-        // Reiter für "Offene Assignments" und "Abgeschlossene Assignments" öffnen
-        document.getElementById('open-assignments').classList.remove('hidden');
-        document.getElementById('completed-assignments').classList.remove('hidden');
-
-        // Fortschrittsbild aktualisieren
-        updateProgressImage();
-    } else {
-        alert("Kein Dateiname gefunden.");
-    }
 }
