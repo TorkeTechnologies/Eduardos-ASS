@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Submission System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <img src="Logo.png" alt="Logo" class="header-logo">
+    <nav id="nav-links" class="hidden">
+        <button onclick="loadView('views/login.html')">Startseite</button>
+        <button onclick="loadView('views/dashboard.html')">Aufgaben</button>
+        <button onclick="logout()">Logout</button>
+    </nav>
+</header>
+<main id="view-container">
+    <!-- Content will be loaded here -->
+</main>
+<script src="script.js"></script>
+</body>
+</html>
