@@ -8,10 +8,12 @@
 </head>
 <body>
 <header>
-    <img src="Logo.png" alt="Logo" class="header-logo">
+    <button class="logo-button" onclick="loadView('views/home.html', updateViewBasedOnLogin)">
+        <img src="Logo.png" alt="Logo" class="header-logo">
+    </button>
     <nav id="nav-links" class="hidden">
-        <button onclick="loadView('views/login.html')">Startseite</button>
-        <button onclick="loadView('views/dashboard.html')">Aufgaben</button>
+        <button onclick="loadHome()">Startseite</button>
+        <button onclick="loadAssignments()">Aufgaben</button>
         <button onclick="logout()">Logout</button>
     </nav>
 </header>

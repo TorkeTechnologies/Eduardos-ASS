@@ -1,67 +1,124 @@
-let assignmentToFileMap = {};
+// Variables
+
+var studentLoggedIn = false;
+var tutorLoggedIn = false;
+var openAssignments = ["GMCI_Assignment07"];
+var completedAssignments = [
+    "GMCI_Assignment06",
+    "GMCI_Assignment05",
+    "GMCI_Assignment04",
+    "GMCI_Assignment03",
+    "GMCI_Assignment02",
+    "GMCI_Assignment01",
+];
+var outstandingAssignments = [
+    "GMCI_Assignment06",
+    "GMCI_Assignment05"
+]
+var gradedAssignments = [
+    "GMCI_Assignment04",
+    "GMCI_Assignment03",
+    "GMCI_Assignment02",
+    "GMCI_Assignment01",
+]
+
+// Load home view on page load
+document.addEventListener('DOMContentLoaded', () => { loadHome(); });
+
+function mascotImageSrc() {
+    if (openAssignments.length < 1) {
+        console.log("Major image loaded");
+        return "../Mascot0.png";
+    }
+    return "../Mascot1.png";
+}
 
 // Dynamically load views into the main container
 function loadView(viewPath, callback = null) {
-    fetch(viewPath)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Failed to load view: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then((html) => {
-            document.getElementById('view-container').innerHTML = html;
-            if (callback) callback(); // Run the callback after loading the view
-        })
-        .catch((error) => console.error('Error loading view:', error));
-}
-
-// Update the header based on the current view
-function updateHeader(view) {
     const navLinks = document.getElementById('nav-links');
-    if (view === 'login') {
-        navLinks.classList.add('hidden'); // Hide navigation links for login
-    } else {
-        navLinks.classList.remove('hidden'); // Show navigation links for other views
+    {
+        if (!studentLoggedIn && !tutorLoggedIn) {
+            navLinks.classList.add('hidden'); // Hide navigation links for login
+        } else {
+            navLinks.classList.remove('hidden'); // Show navigation links for other views
+        }
+        fetch(viewPath)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Failed to load view: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then((html) => {
+                document.getElementById('view-container').innerHTML = html;
+                if (callback) callback(); // Run the callback after loading the view
+            })
+            .catch((error) => console.error('Error loading view:', error));
     }
 }
 
-// Load login view on page load
-document.addEventListener('DOMContentLoaded', () => {
-    loadView('views/login.html', () => updateHeader('login'));
-});
-
 // Handle login
-function handleLogin(event) {
+function handleStudentLogin(event) {
     event.preventDefault(); // Prevent default form submission
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
     if (username && password) {
+        studentLoggedIn = true;
         console.log(`User logged in: ${username}`);
-        loadView('views/dashboard.html', () => {
-            updateHeader('dashboard');
-            setupDashboard();
-        });
+        loadStudentDashboard();
     } else {
         alert('Please enter your LUH-ID and WebSSO password.');
     }
 }
 
-// Set up dashboard functionality
-function setupDashboard() {
-    document.getElementById('logout-button').addEventListener('click', logout);
+function handleTutorLogin(event) {
+    event.preventDefault(); // Prevent default form submission
 
-    // Example: Set up event listeners for open and completed assignments
-    document.querySelectorAll('.toggle-section').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const sectionId = btn.dataset.sectionId;
-            toggleSection(sectionId);
-        });
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    if (username && password) {
+        tutorLoggedIn = true;
+        console.log(`User logged in: ${username}`);
+        loadTutorDashboard()
+    } else {
+        alert('Please enter your LUH-ID and WebSSO password.');
+    }
+}
+
+function loadAssignments() {
+    if (studentLoggedIn) {
+        loadStudentDashboard();
+        return;
+    }
+    loadTutorDashboard()
+}
+
+function  loadHome() {
+    loadView('views/home.html', updateHomeBasedOnLogin)
+}
+
+function loadTutorDashboard() {
+    loadView('views/tutor-dashboard.html', setupTutorDashboard());
+}
+
+function setupTutorDashboard() {
+
+}
+
+function loadStudentDashboard() {
+    loadView('views/student-dashboard.html', () =>{
+        setupStudentDashboard();
     });
+}
 
-    document.getElementById('file-input').addEventListener('change', redirectToUploadPage);
+// Set up dashboard functionality
+function setupStudentDashboard() {
+    document.getElementById('mascot').src = mascotImageSrc();
+    populateAssignmentList('open-assignments', openAssignments, false);
+    populateAssignmentList('completed-assignments', completedAssignments, true);
 }
 
 // Toggle section visibility
@@ -106,47 +163,83 @@ function submitFile() {
             document
                 .getElementById('return-to-dashboard-button')
                 .addEventListener('click', () => {
-                    loadView('views/dashboard.html', () => {
+                    loadView('views/student-dashboard.html', () => {
                         updateHeader('dashboard');
                         setupDashboard();
                     });
                 });
         });
-        // Fortschrittsbild aktualisieren
-        updateProgressImage();
     } else {
         alert("Kein Dateiname gefunden.");
     }
 }
 
-// Logout and return to login screen
+// Logout and return to home screen
 function logout() {
-    loadView('views/login.html', () => updateHeader('login'));
+    studentLoggedIn = false;
+    tutorLoggedIn = false;
+    loadHome();
     alert('Sie haben sich erfolgreich ausgeloggt.');
 }
 
-// Switch pages (e.g., Startseite, Aufgaben)
-function goToPage(page) {
-    alert(`Wechsel zu: ${page}`);
+function updateHomeBasedOnLogin() {
+    const studentLoginButton = document.getElementById('student-login-button');
+    const tutorLoginButton = document.getElementById('tutor-login-button');
+
+    // Check if the student is logged in
+    if (studentLoggedIn) {
+        studentLoginButton.textContent = "Studenten Dashboard"; // Change button text
+        studentLoginButton.onclick = () => loadStudentDashboard();
+    } else {
+        studentLoginButton.textContent = "Student Login"; // Change button text
+        studentLoginButton.onclick = () => loadView('views/student-login.html');
+    }
+
+    // Check if the tutor is logged in
+    if (tutorLoggedIn) {
+        tutorLoginButton.textContent = "Tutor Dashboard"; // Change button text
+        tutorLoginButton.onclick = () => loadTutorDashboard();
+    } else {
+        tutorLoginButton.textContent = "Tutor Login"; // Change button text
+        tutorLoginButton.onclick = () => loadView('views/tutor-login.html');
+    }
 }
 
-// Fortschritt berechnen und Bild anzeigen
-function updateProgressImage() {
-    const totalAssignments = document.getElementById('open-assignments').children.length +
-        document.getElementById('completed-assignments').children.length;
-    const completedAssignments = document.getElementById('completed-assignments').children.length;
-    const progress = (completedAssignments / totalAssignments) * 100;
-    const progressImg = document.getElementById('progress-img');
-    const progressImageContainer = document.getElementById('progress-image');
-    // Fortschrittsbild auswählen
-    if (progress === 100) {
-        progressImg.src = progressImages.full;
-    } else if (progress >= 75) {
-        progressImg.src = progressImages.threeQuarters;
-    } else if (progress >= 50) {
-        progressImg.src = progressImages.half;
-    } else {
-        progressImg.src = progressImages.low;
-    }
-    // Fortschritts-Bild anzeigen
+// Dashboards
+
+// Function to populate a list dynamically
+function populateAssignmentList(listId, assignments, isCompleted) {
+    const listElement = document.getElementById(listId);
+
+    // Clear existing content
+    listElement.innerHTML = "";
+
+    // Add assignments to the list
+    assignments.forEach((assignment) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = assignment;
+
+        // Add button based on the list type
+        const button = document.createElement("button");
+        if (isCompleted) {
+            button.textContent = "⬇ Download";
+            button.onclick = () => alert(`Downloading ${assignment}`);
+        } else {
+            button.textContent = "📤 Upload";
+            button.onclick = openFileExplorer;
+        }
+
+        listItem.appendChild(button);
+
+        // For "open assignments", include a file input
+        if (!isCompleted) {
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+            fileInput.className = "hidden";
+            fileInput.onchange = redirectToUploadPage;
+            listItem.appendChild(fileInput);
+        }
+
+        listElement.appendChild(listItem);
+    });
 }
