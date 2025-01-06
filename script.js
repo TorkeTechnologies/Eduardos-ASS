@@ -10,6 +10,14 @@ var completedAssignments = [
     "GMCI_Assignment02",
     "GMCI_Assignment01"
 ];
+var closedAssignments = [
+    "GMCI_Assignment06",
+    "GMCI_Assignment05",
+    "GMCI_Assignment04",
+    "GMCI_Assignment03",
+    "GMCI_Assignment02",
+    "GMCI_Assignment01"
+];
 var outstandingAssignments = [
     "GMCI_Assignment06",
     "GMCI_Assignment05"
@@ -93,13 +101,20 @@ function loadAssignment(assignment) {
         if (completedAssignments.includes(assignment)) {
             document.getElementById('downloadWork').classList.remove('hidden');
         }
+        if (!closedAssignments.includes(assignment) && studentLoggedIn) {
+            let uploadWork = document.getElementById('uploadWork')
+            uploadWork.classList.remove('hidden');
+            uploadWork.onclick = () => openFileExplorer(assignment, submitWork);
+        }
 
         if (gradedAssignments.includes(assignment)) {
             document.getElementById('downloadGrading').classList.remove('hidden');
         }
 
         if (tutorLoggedIn) {
-            document.getElementById('uploadGrading').classList.remove('hidden');
+            let uploadGrading = document.getElementById('uploadGrading');
+            uploadGrading.classList.remove('hidden');
+            uploadGrading.onclick = () => openFileExplorer(assignment, submitGrading);
         }
     });
 }
@@ -126,9 +141,8 @@ function setupTutorDashboard() {
 }
 
 function loadStudentDashboard() {
-    loadView('views/student-dashboard.html', () =>{
+    loadView('views/student-dashboard.html', () => {
         setupStudentDashboard();
-
     });
 }
 
@@ -146,7 +160,7 @@ function toggleSection(sectionId) {
 }
 
 // Open file explorer
-function openFileExplorer(assignment) {
+function openFileExplorer(assignment, callback) {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.style.display = "none";
@@ -154,7 +168,7 @@ function openFileExplorer(assignment) {
 
     // Listen for file selection
     fileInput.addEventListener("change", (event) => {
-        redirectToUploadPage(event, assignment); // Pass the event when a file is selected
+        redirectToUploadPage(event, assignment, callback); // Pass the event when a file is selected
     });
 
     // Trigger the file input click to open file explorer
@@ -167,36 +181,37 @@ function openFileExplorer(assignment) {
 }
 
 // Redirect to file confirmation page
-function redirectToUploadPage(event, assignment) {
+function redirectToUploadPage(event, assignment, callback) {
     const file = event.target.files[0]; // Access the selected file
     if (file) {
         loadView("views/file-confirmation.html", () => {
             document.getElementById("uploaded-filename").textContent = file.name;
             document
                 .getElementById("submit-button")
-                .addEventListener("click", () => submitFile(assignment));
+                .addEventListener("click", () => callback(assignment));
         });
     }
 }
 
 // Submit file and show thank-you page
-function submitFile(assignment) {
+function submitWork(assignment) {
     let index = openAssignments.indexOf(assignment);
     if (index > -1) {
         openAssignments.splice(index, 1);
     }
-    completedAssignments.push(assignment);
+    completedAssignments.unshift(assignment);
     loadView('views/thank-you.html');
 }
 
 function submitGrading(assignment) {
     let index = outstandingAssignments.indexOf(assignment);
     if (index > -1) {
-        openAssignments.splice(index, 1);
+        outstandingAssignments.splice(index, 1);
     }
     if (!gradedAssignments.includes(assignment)) {
-        gradedAssignments.push(assignment);
+        gradedAssignments.unshift(assignment);
     }
+    loadView('views/thank-you.html');
 }
 
 // Logout and return to home screen
@@ -232,10 +247,6 @@ function updateHomeBasedOnLogin() {
 
 // Dashboards
 
-function uploadGrading() {
-
-}
-
 // Function to populate a list dynamically
 function populateAssignmentList(listId, assignments, isCompleted) {
     const listElement = document.getElementById(listId);
@@ -265,10 +276,17 @@ function populateAssignmentList(listId, assignments, isCompleted) {
             };
         } else {
             button.textContent = "⬆ Upload";
-            button.onclick = (event) => {
-                event.stopPropagation();
-                openFileExplorer(assignment);
-            };
+            if (listId === 'completed-assignments') {
+                button.onclick = (event) => {
+                    event.stopPropagation();
+                    openFileExplorer(assignment, submitWork);
+                };
+            } else {
+                button.onclick = (event) => {
+                    event.stopPropagation();
+                    openFileExplorer(assignment, submitGrading);
+                };
+            }
         }
 
         listItem.appendChild(button);
