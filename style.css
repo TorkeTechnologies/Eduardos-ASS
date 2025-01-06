@@ -292,9 +292,9 @@ footer {
 /* Mascot CSS */
 .mascot-img {
     width: 100%;
-    height: 250px;
+    height: 15vh;
     object-fit: contain;
     position: absolute;
     bottom: 90px;
-    left: calc(-50% + 115px);
+    left: calc(-50% + 7.5vh);
 }
