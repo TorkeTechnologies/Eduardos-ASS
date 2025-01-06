@@ -276,7 +276,7 @@ function populateAssignmentList(listId, assignments, isCompleted) {
             };
         } else {
             button.textContent = "⬆ Upload";
-            if (listId === 'completed-assignments') {
+            if (listId === 'open-assignments') {
                 button.onclick = (event) => {
                     event.stopPropagation();
                     openFileExplorer(assignment, submitWork);
