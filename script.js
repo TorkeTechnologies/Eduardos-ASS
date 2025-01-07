@@ -73,6 +73,7 @@ function handleStudentLogin(event) {
 
     if (username && password) {
         studentLoggedIn = true;
+        tutorLoggedIn = false;
         console.log(`User logged in: ${username}`);
         loadStudentDashboard();
     } else {
@@ -88,6 +89,7 @@ function handleTutorLogin(event) {
 
     if (username && password) {
         tutorLoggedIn = true;
+        studentLoggedIn = false;
         console.log(`User logged in: ${username}`);
         loadTutorDashboard()
     } else {
