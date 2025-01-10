@@ -28,7 +28,24 @@ var gradedAssignments = [
     "GMCI_Assignment02",
     "GMCI_Assignment01"
 ];
-
+var groups = [
+    "Group 3",
+    "Group 9",
+    "Group 33"
+]
+const assignmentMaxPoints = new Map()
+assignmentMaxPoints.set("GMCI_Assignment07", 25)
+assignmentMaxPoints.set("GMCI_Assignment06", 30)
+assignmentMaxPoints.set("GMCI_Assignment05", 29)
+assignmentMaxPoints.set("GMCI_Assignment04", 24)
+assignmentMaxPoints.set("GMCI_Assignment03", 31)
+assignmentMaxPoints.set("GMCI_Assignment02", 22)
+assignmentMaxPoints.set("GMCI_Assignment01", 27)
+const assignmentGrades = new Map();
+assignmentGrades.set("GMCI_Assignment04", 22);
+assignmentGrades.set("GMCI_Assignment03", 31);
+assignmentGrades.set("GMCI_Assignment02", 21);
+assignmentGrades.set("GMCI_Assignment01", 26);
 // Load home view on page load
 document.addEventListener('DOMContentLoaded', () => { loadHome(); });
 
@@ -138,8 +155,8 @@ function loadTutorDashboard() {
 }
 
 function setupTutorDashboard() {
-    populateAssignmentList('outstanding-assignments', outstandingAssignments, true);
-    populateAssignmentList('graded-assignments', gradedAssignments, false);
+    populateAssignmentsTutor('outstanding-assignments', outstandingAssignments, true);
+    populateAssignmentsTutor('graded-assignments', gradedAssignments, false);
 }
 
 function loadStudentDashboard() {
@@ -249,6 +266,58 @@ function updateHomeBasedOnLogin() {
 
 // Dashboards
 
+function populateAssignmentsTutor(listId, assignments, isCompleted) {
+    const listElement = document.getElementById(listId);
+
+    // Clear existing content
+    listElement.innerHTML = "";
+
+    if (assignments.length <= 0) {
+        let emptyAssignmentsElement = document.createElement("li");
+        emptyAssignmentsElement.textContent = "In diesem Bereich sind noch keine Assignments";
+        listElement.appendChild(emptyAssignmentsElement);
+        return;
+    }
+    // Add assignments to the list
+    assignments.forEach((assignment) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = assignment;
+        listItem.classList.add("assignment");
+        listItem.onclick = () => {
+            toggleSection((assignment + 'groups'));
+
+        }
+        const assGroups = document.createElement("lu");
+        assGroups.id = assignment + 'groups';
+        assGroups.classList.add("hidden");
+        groups.forEach((group) => {
+            const groupElement = document.createElement("li");
+            groupElement.textContent = group;
+            groupElement.classList.add("group");
+            groupElement.classList.add("hidden");
+            groupElement.onclick = () => loadAssignment(assignment);
+            const button = document.createElement("button");
+            if (isCompleted) {
+                button.textContent = "⬇ Download";
+                button.onclick = (event) => {
+                    event.stopPropagation();
+                    alert(`Downloading ${assignment}`);
+                };
+            } else {
+                button.textContent = "⬆ Upload";
+                button.onclick = (event) => {
+                    event.stopPropagation();
+                    openFileExplorer(assignment, submitGrading);
+                };
+            }
+            groupElement.appendChild(button);
+            assGroups.appendChild(groupElement);
+        })
+        listItem.appendChild(assGroups);
+        listElement.appendChild(listItem);
+    });
+}
+
 // Function to populate a list dynamically
 function populateAssignmentList(listId, assignments, isCompleted) {
     const listElement = document.getElementById(listId);
@@ -266,6 +335,7 @@ function populateAssignmentList(listId, assignments, isCompleted) {
     assignments.forEach((assignment) => {
         const listItem = document.createElement("li");
         listItem.textContent = assignment;
+        listItem.classList.add("assignment");
         listItem.onclick = () => loadAssignment(assignment);
 
         // Add button based on the list type
@@ -278,19 +348,11 @@ function populateAssignmentList(listId, assignments, isCompleted) {
             };
         } else {
             button.textContent = "⬆ Upload";
-            if (listId === 'open-assignments') {
-                button.onclick = (event) => {
-                    event.stopPropagation();
-                    openFileExplorer(assignment, submitWork);
-                };
-            } else {
-                button.onclick = (event) => {
-                    event.stopPropagation();
-                    openFileExplorer(assignment, submitGrading);
-                };
-            }
+            button.onclick = (event) => {
+                event.stopPropagation();
+                openFileExplorer(assignment, submitWork);
+            };
         }
-
         listItem.appendChild(button);
         listElement.appendChild(listItem);
     });
