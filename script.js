@@ -1,32 +1,32 @@
 // Variables
 var studentLoggedIn = false;
 var tutorLoggedIn = false;
-var openAssignments = ["GMCI_Assignment07"];
+var openAssignments = ["GMCI Assignment07"];
 var completedAssignments = [
-    "GMCI_Assignment06",
-    "GMCI_Assignment05",
-    "GMCI_Assignment04",
-    "GMCI_Assignment03",
-    "GMCI_Assignment02",
-    "GMCI_Assignment01"
+    "GMCI Assignment06",
+    "GMCI Assignment05",
+    "GMCI Assignment04",
+    "GMCI Assignment03",
+    "GMCI Assignment02",
+    "GMCI Assignment01"
 ];
 var closedAssignments = [
-    "GMCI_Assignment06",
-    "GMCI_Assignment05",
-    "GMCI_Assignment04",
-    "GMCI_Assignment03",
-    "GMCI_Assignment02",
-    "GMCI_Assignment01"
+    "GMCI Assignment06",
+    "GMCI Assignment05",
+    "GMCI Assignment04",
+    "GMCI Assignment03",
+    "GMCI Assignment02",
+    "GMCI Assignment01"
 ];
 var outstandingAssignments = [
-    "GMCI_Assignment06",
-    "GMCI_Assignment05"
+    "GMCI Assignment06",
+    "GMCI Assignment05"
 ];
 var gradedAssignments = [
-    "GMCI_Assignment04",
-    "GMCI_Assignment03",
-    "GMCI_Assignment02",
-    "GMCI_Assignment01"
+    "GMCI Assignment04",
+    "GMCI Assignment03",
+    "GMCI Assignment02",
+    "GMCI Assignment01"
 ];
 var groups = [
     "Group 3",
@@ -34,20 +34,32 @@ var groups = [
     "Group 33"
 ]
 const assignmentMaxPoints = new Map()
-assignmentMaxPoints.set("GMCI_Assignment07", 25)
-assignmentMaxPoints.set("GMCI_Assignment06", 30)
-assignmentMaxPoints.set("GMCI_Assignment05", 29)
-assignmentMaxPoints.set("GMCI_Assignment04", 24)
-assignmentMaxPoints.set("GMCI_Assignment03", 31)
-assignmentMaxPoints.set("GMCI_Assignment02", 22)
-assignmentMaxPoints.set("GMCI_Assignment01", 27)
+assignmentMaxPoints.set("GMCI Assignment07", 25)
+assignmentMaxPoints.set("GMCI Assignment06", 30)
+assignmentMaxPoints.set("GMCI Assignment05", 29)
+assignmentMaxPoints.set("GMCI Assignment04", 24)
+assignmentMaxPoints.set("GMCI Assignment03", 31)
+assignmentMaxPoints.set("GMCI Assignment02", 22)
+assignmentMaxPoints.set("GMCI Assignment01", 27)
 const assignmentGrades = new Map();
-assignmentGrades.set("GMCI_Assignment04", 22);
-assignmentGrades.set("GMCI_Assignment03", 31);
-assignmentGrades.set("GMCI_Assignment02", 21);
-assignmentGrades.set("GMCI_Assignment01", 26);
+assignmentGrades.set("GMCI Assignment04", 22);
+assignmentGrades.set("GMCI Assignment03", 31);
+assignmentGrades.set("GMCI Assignment02", 21);
+assignmentGrades.set("GMCI Assignment01", 26);
 // Load home view on page load
-document.addEventListener('DOMContentLoaded', () => { loadHome(); });
+document.addEventListener('DOMContentLoaded', () => loadHome() );
+
+function getMaxPointsSum() {
+    let sum = 0;
+    assignmentMaxPoints.forEach((element) => sum += element)
+    return sum;
+}
+
+function getGradesSum() {
+    let sum = 0;
+    assignmentGrades.forEach((element) => sum += element)
+    return sum;
+}
 
 function mascotImageSrc() {
     if (openAssignments.length < 1) {
@@ -335,7 +347,7 @@ function populateAssignmentList(listId, assignments, isCompleted) {
     assignments.forEach((assignment) => {
         const listItem = document.createElement("li");
         listItem.textContent = assignment;
-        listItem.classList.add("assignment");
+        listItem.classList.add("student-assignment");
         listItem.onclick = () => loadAssignment(assignment);
 
         // Add button based on the list type
