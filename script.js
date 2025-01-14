@@ -368,6 +368,12 @@ function populateAssignmentList(listId, assignments, isCompleted) {
                 event.stopPropagation();
                 alert(`Downloading ${assignment}`);
             };
+            if (gradedAssignments.includes(assignment)) {
+                let points = document.createElement("p");
+                points.classList.add("points");
+                points.textContent = getAssignmentGrade(assignment);
+                listItem.appendChild(points);
+            }
         } else {
             button.textContent = "⬆ Upload";
             button.onclick = (event) => {
