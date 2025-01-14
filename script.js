@@ -141,7 +141,7 @@ function loadAssignment(assignment) {
         if (!closedAssignments.includes(assignment) && studentLoggedIn) {
             let uploadWork = document.getElementById('uploadWork')
             uploadWork.classList.remove('hidden');
-            uploadWork.onclick = () => openFileExplorer(assignment, submitWork);
+            uploadWork.onclick = () => openFileExplorer(assignment, "student", submitWork);
         }
 
         if (gradedAssignments.includes(assignment)) {
@@ -151,7 +151,7 @@ function loadAssignment(assignment) {
         if (tutorLoggedIn) {
             let uploadGrading = document.getElementById('uploadGrading');
             uploadGrading.classList.remove('hidden');
-            uploadGrading.onclick = () => openFileExplorer(assignment, submitGrading);
+            uploadGrading.onclick = () => openFileExplorer(assignment, "tutor", submitGrading);
         }
     });
 }
@@ -197,7 +197,7 @@ function toggleSection(sectionId) {
 }
 
 // Open file explorer
-function openFileExplorer(assignment, callback) {
+function openFileExplorer(assignment, target, callback) {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.style.display = "none";
@@ -205,16 +205,38 @@ function openFileExplorer(assignment, callback) {
 
     // Listen for file selection
     fileInput.addEventListener("change", (event) => {
-        redirectToUploadPage(event, assignment, callback); // Pass the event when a file is selected
+        if (target === "student") {
+            redirectToUploadPage(event, assignment, callback); // Pass the event when a file is selected
+        } else {
+            redirectToGradingPage(event, assignment, callback);
+        }
     });
 
     // Trigger the file input click to open file explorer
     fileInput.click();
+}
 
-    // Clean up the DOM by removing the input element after usage
-    fileInput.addEventListener("change", () => {
-        document.body.removeChild(fileInput);
-    });
+function redirectToGradingPage(event, assignment, callback) {
+    const file = event.target.files[0]; // Access the selected file
+    if (file) {
+        loadView("views/file-confirmation.html", () => {
+            var grade = -1;
+            document.getElementById("uploaded-filename").textContent = file.name;
+            const gradingField = document.getElementById("grading-field");
+            gradingField.classList.remove('hidden');
+            const submitButton = document.getElementById("submit-button")
+            submitButton.addEventListener("click", () => callback(grade, assignment))
+            submitButton.disabled = grade < 0 || grade > assignmentMaxPoints.get(assignment);
+            gradingField.addEventListener("change", (event) => {
+                console.log("Grading field", event.target.value);
+                grade = event.target.value;
+                submitButton.disabled = grade < 0 || grade > assignmentMaxPoints.get(assignment);
+            })
+            gradingField.max = assignmentMaxPoints.get(assignment);
+        });
+    } else {
+        alert("Please select an uploaded file.");
+    }
 }
 
 // Redirect to file confirmation page
@@ -240,7 +262,8 @@ function submitWork(assignment) {
     loadView('views/thank-you.html');
 }
 
-function submitGrading(assignment) {
+function submitGrading(grade, assignment) {
+    console.log(grade);
     let index = outstandingAssignments.indexOf(assignment);
     if (index > -1) {
         outstandingAssignments.splice(index, 1);
@@ -249,6 +272,7 @@ function submitGrading(assignment) {
         gradedAssignments.unshift(assignment);
     }
     loadView('views/thank-you.html');
+    assignmentGrades.set(assignment, grade);
 }
 
 // Logout and return to home screen
@@ -303,7 +327,6 @@ function populateAssignmentsTutor(listId, assignments, isCompleted) {
         listItem.classList.add("assignment");
         listItem.onclick = () => {
             toggleSection((assignment + 'groups'));
-
         }
         const assGroups = document.createElement("lu");
         assGroups.id = assignment + 'groups';
@@ -325,7 +348,7 @@ function populateAssignmentsTutor(listId, assignments, isCompleted) {
                 button.textContent = "⬆ Upload";
                 button.onclick = (event) => {
                     event.stopPropagation();
-                    openFileExplorer(assignment, submitGrading);
+                    openFileExplorer(assignment, "tutor", submitGrading);
                 };
                 let points = document.createElement("p");
                 points.classList.add("points");
@@ -378,7 +401,7 @@ function populateAssignmentList(listId, assignments, isCompleted) {
             button.textContent = "⬆ Upload";
             button.onclick = (event) => {
                 event.stopPropagation();
-                openFileExplorer(assignment, submitWork);
+                openFileExplorer(assignment, "student", submitWork);
             };
         }
         listItem.appendChild(button);
