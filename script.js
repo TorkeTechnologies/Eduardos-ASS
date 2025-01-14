@@ -61,6 +61,12 @@ function getGradesSum() {
     return sum;
 }
 
+function getAssignmentGrade(assignment) {
+    let grade = assignmentGrades.get(assignment);
+    let maxPoints = assignmentMaxPoints.get(assignment);
+    return grade + "/" + maxPoints;
+}
+
 function mascotImageSrc() {
     if (openAssignments.length < 1) {
         console.log("Major image loaded");
@@ -321,6 +327,10 @@ function populateAssignmentsTutor(listId, assignments, isCompleted) {
                     event.stopPropagation();
                     openFileExplorer(assignment, submitGrading);
                 };
+                let points = document.createElement("p");
+                points.classList.add("points");
+                points.textContent = getAssignmentGrade(assignment);
+                groupElement.appendChild(points);
             }
             groupElement.appendChild(button);
             assGroups.appendChild(groupElement);

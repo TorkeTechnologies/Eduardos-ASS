@@ -326,3 +326,7 @@ footer {
 .group:hover {
     background-color: #45a049;
 }
+
+.points {
+    margin: 0 auto;
+}
