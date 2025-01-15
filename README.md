@@ -1,9 +1,10 @@
 **Welcome to Assignment Submission System GitHub Page**
 ***
 To run the application follow the steps below.\
-Either use an extension like live server or an IDE like WebStorm.\
+One can use an extension like live server for VSCode or an IDE like WebStorm and open the index.html file from there.
 
-One can also create a local server using python:\
+**Note that the following does not seem to display the mascot image correctly**\
+Create a local server using python:\
 Python:\
 python -m http.server 8000
 
