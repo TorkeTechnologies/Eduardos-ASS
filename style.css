@@ -330,3 +330,8 @@ footer {
 .points {
     margin: 0 auto;
 }
+
+.right-items {
+    display: flex;
+    gap: 10px;
+}

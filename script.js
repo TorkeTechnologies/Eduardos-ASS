@@ -173,8 +173,8 @@ function loadTutorDashboard() {
 }
 
 function setupTutorDashboard() {
-    populateAssignmentsTutor('outstanding-assignments', outstandingAssignments, true);
-    populateAssignmentsTutor('graded-assignments', gradedAssignments, false);
+    populateAssignmentsTutor('outstanding-assignments', outstandingAssignments, false);
+    populateAssignmentsTutor('graded-assignments', gradedAssignments, true);
 }
 
 function loadStudentDashboard() {
@@ -328,10 +328,16 @@ function populateAssignmentsTutor(listId, assignments, isCompleted) {
         listItem.onclick = () => {
             toggleSection((assignment + 'groups'));
         }
+
+        let div = document.createElement("div");
+        div.classList.add("right-items");
+
         const assGroups = document.createElement("lu");
         assGroups.id = assignment + 'groups';
         assGroups.classList.add("hidden");
         groups.forEach((group) => {
+            let div = document.createElement("div");
+            div.classList.add("right-items");
             const groupElement = document.createElement("li");
             groupElement.textContent = group;
             groupElement.classList.add("group");
@@ -339,13 +345,7 @@ function populateAssignmentsTutor(listId, assignments, isCompleted) {
             groupElement.onclick = () => loadAssignment(assignment);
             const button = document.createElement("button");
             if (isCompleted) {
-                button.textContent = "⬇ Download";
-                button.onclick = (event) => {
-                    event.stopPropagation();
-                    alert(`Downloading ${assignment}`);
-                };
-            } else {
-                button.textContent = "⬆ Upload";
+                button.textContent = "⬆ Bewertung";
                 button.onclick = (event) => {
                     event.stopPropagation();
                     openFileExplorer(assignment, "tutor", submitGrading);
@@ -353,9 +353,16 @@ function populateAssignmentsTutor(listId, assignments, isCompleted) {
                 let points = document.createElement("p");
                 points.classList.add("points");
                 points.textContent = getAssignmentGrade(assignment);
-                groupElement.appendChild(points);
+                div.appendChild(points);
+            } else {
+                button.textContent = "⬇ Bearbeitung";
+                button.onclick = (event) => {
+                    event.stopPropagation();
+                    alert(`Downloading ${assignment} work`);
+                };
             }
-            groupElement.appendChild(button);
+            div.appendChild(button);
+            groupElement.appendChild(div);
             assGroups.appendChild(groupElement);
         })
         listItem.appendChild(assGroups);
@@ -384,27 +391,42 @@ function populateAssignmentList(listId, assignments, isCompleted) {
         listItem.onclick = () => loadAssignment(assignment);
 
         // Add button based on the list type
+        let div = document.createElement("div");
+        div.classList.add("right-items");
+
         const button = document.createElement("button");
+        let downloadTask = document.createElement("button");
+        downloadTask.textContent = "⬇ Aufgabe";
+        downloadTask.classList.add("quick-button");
+        downloadTask.onclick = (event) => {
+            event.stopPropagation();
+            alert(`Downloading ${assignment}`);
+        };
         if (isCompleted) {
-            button.textContent = "⬇ Download";
-            button.onclick = (event) => {
-                event.stopPropagation();
-                alert(`Downloading ${assignment}`);
-            };
             if (gradedAssignments.includes(assignment)) {
                 let points = document.createElement("p");
                 points.classList.add("points");
                 points.textContent = getAssignmentGrade(assignment);
-                listItem.appendChild(points);
+                div.appendChild(points);
+
+                let downloadGrading = document.createElement("button");
+                downloadGrading.textContent = "⬇ Bewertung";
+                downloadGrading.classList.add("quick-button");
+                downloadGrading.onclick = (event) => {
+                    event.stopPropagation();
+                    alert(`Downloading grading for ${assignment}`);
+                }
             }
         } else {
-            button.textContent = "⬆ Upload";
+            button.textContent = "⬆ Bearbeitung";
             button.onclick = (event) => {
                 event.stopPropagation();
                 openFileExplorer(assignment, "student", submitWork);
             };
+            div.appendChild(button);
         }
-        listItem.appendChild(button);
+        div.appendChild(downloadTask);
+        listItem.appendChild(div);
         listElement.appendChild(listItem);
     });
 }
